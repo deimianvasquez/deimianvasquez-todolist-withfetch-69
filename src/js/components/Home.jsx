@@ -1,16 +1,23 @@
 import { useState, useEffect } from "react";
 
 const urlBaseTodos = "https://playground.4geeks.com/todo"
-
+const stateTask = {
+	label: "",
+	is_done: false
+}
 
 //create your first component
 const Home = () => {
 
 	const [todos, setTodos] = useState([]) // asegurar que sea las tareas de db
-	const [task, setTask] = useState({
-		label: "",
-		is_done: false
-	})
+	const [task, setTask] = useState(stateTask)
+	const [filterSatatus, setFilterStatus] = useState("all")
+
+	/*
+		all
+		done
+		pending
+	*/
 
 
 	const getAllTask = async () => {
@@ -24,7 +31,7 @@ const Home = () => {
 			}
 			if (response.status == 404) {
 				// crear una funcion que crea el usuario --> en breve
-				console.log("Debo agregar este usuario")
+
 				createUser()
 			}
 
@@ -55,7 +62,15 @@ const Home = () => {
 
 				if (response.ok) {
 					// consultar las tareas nuevamente
-					getAllTask()
+					setTask(stateTask)
+					const data = await response.json()
+					setTodos([
+						...todos,
+						data
+					])
+
+
+					// getAllTask()
 				}
 			}
 		} catch (error) {
@@ -70,13 +85,10 @@ const Home = () => {
 				method: "POST"
 			})
 
-			console.log(response)
-
 		} catch (error) {
 
 		}
 	}
-
 
 
 	async function taskDelete(id) {
@@ -84,16 +96,40 @@ const Home = () => {
 			const response = await fetch(`${urlBaseTodos}/todos/${id}`, {
 				method: "DELETE"
 			})
+			if (response.ok) {
+				getAllTask()
+			}
+		} catch (error) {
+
+		}
+	}
+
+	async function taskDone(task) {
+		try {
+			const response = await fetch(`${urlBaseTodos}/todos/${task.id}`, {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify({
+					is_done: !task.is_done
+				})
+			})
 
 			if (response.ok) {
 				getAllTask()
 			}
 
-
 		} catch (error) {
 
 		}
 	}
+
+	const filterTodos = todos.filter((item) => {
+		if (filterSatatus === "done") return item.is_done
+		if (filterSatatus === "pending") return !item.is_done
+		return true
+	})
 
 
 	useEffect(() => {
@@ -117,27 +153,90 @@ const Home = () => {
 						onChange={handleChange}
 						onKeyDown={addNewTask}
 					/>
+
+
+					<ul className="list-group list-group-flush">
+						{
+							filterTodos.length <= 0 ?
+								<li>Agrega una tarea</li> :
+								<>
+									{
+										filterTodos.map((item) => {
+											return (
+
+												<li
+													key={item.id}
+												>
+													<div className="d-flex align-items-center justify-content-between gap2">
+														<span>
+															{item.label}
+														</span>
+
+														<div className="d-flex align-items-center gap-2 px-2">
+															<input
+																type="checkbox"
+																checked={item.is_done}
+																onChange={() => taskDone(item)}
+															/>
+															<button
+																className="btn btn-outline-danger"
+																onClick={() => taskDelete(item.id)}
+															>
+																Eliminar
+															</button>
+														</div>
+													</div>
+												</li>
+											)
+										})
+
+									}
+								</>
+						}
+					</ul>
 				</div>
+			</div>
+			<div className="row mt-2">
+				{/* 
+					1.- All
+					2.- Task End
+					3.- Task pending
+				*/}
 
-				<ul>
-					{
-						todos.length <= 0 ?
-							<li>Agrega una tarea</li> :
-							<>
-								{
-									todos.map((item) => {
-										return (
-											<li
-												key={item.id}
-												onClick={() => taskDelete(item.id)}
-											>{item.label}</li>
-										)
-									})
+				<div className="col-12 col-md-6 offset-md-3 border border-danger">
+					<div className="d-flex justify-content-center gap-3 flex-wrap">
+						{/* all */}
+						<label className="d-flex align-items-center gap-1">
+							<input
+								type="checkbox"
+								checked={filterSatatus === "all"}
+								onChange={() => setFilterStatus("all")}
+							/>
+							<span>Todas</span>
+						</label>
 
-								}
-							</>
-					}
-				</ul>
+						{/* Task end */}
+						<label className="d-flex align-items-center gap-1">
+							<input
+								type="checkbox"
+								checked={filterSatatus === "done"}
+								onChange={() => setFilterStatus("done")}
+
+							/>
+							<span>Finalizadas</span>
+						</label>
+
+						{/* Task pending */}
+						<label className="d-flex align-items-center gap-1">
+							<input
+								type="checkbox"
+								checked={filterSatatus === "pending"}
+								onChange={() => setFilterStatus("pending")}
+							/>
+							<span>Por finalizar</span>
+						</label>
+					</div>
+				</div>
 			</div>
 		</div >
 	);
