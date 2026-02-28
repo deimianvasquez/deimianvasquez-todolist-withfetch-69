@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Navbar } from "../components/Navbar";
 
 const urlBaseTodos = "https://playground.4geeks.com/todo"
 const stateTask = {
@@ -139,106 +140,111 @@ const Home = () => {
 
 	return (
 
-		<div className="container">
-			<div className="row justify-content-center">
-				<div className="col-12 col-md-6">
-					<h1 className="text-center">Todo list</h1>
-
-					<input
-						type="text"
-						name="label"
-						placeholder="Ingresa la tarea"
-						className="form-control"
-						value={task.label}
-						onChange={handleChange}
-						onKeyDown={addNewTask}
-					/>
+		<>
 
 
-					<ul className="list-group list-group-flush">
-						{
-							filterTodos.length <= 0 ?
-								<li>Agrega una tarea</li> :
-								<>
-									{
-										filterTodos.map((item) => {
-											return (
+			<div className="container">
+				<div className="row justify-content-center">
+					<div className="col-12 col-md-6">
+						<h1 className="text-center">Todo list</h1>
 
-												<li
-													key={item.id}
-												>
-													<div className="d-flex align-items-center justify-content-between gap2">
-														<span>
-															{item.label}
-														</span>
+						<input
+							type="text"
+							name="label"
+							placeholder="Ingresa la tarea"
+							className="form-control"
+							value={task.label}
+							onChange={handleChange}
+							onKeyDown={addNewTask}
+						/>
 
-														<div className="d-flex align-items-center gap-2 px-2">
-															<input
-																type="checkbox"
-																checked={item.is_done}
-																onChange={() => taskDone(item)}
-															/>
-															<button
-																className="btn btn-outline-danger"
-																onClick={() => taskDelete(item.id)}
-															>
-																Eliminar
-															</button>
+
+						<ul className="list-group list-group-flush my-todos">
+							{
+								filterTodos.length <= 0 ?
+									<li>Agrega una tarea</li> :
+									<>
+										{
+											filterTodos.map((item) => {
+												return (
+
+													<li
+														key={item.id}
+													>
+														<div className="d-flex align-items-center justify-content-between gap2">
+															<span>
+																{item.label}
+															</span>
+
+															<div className="d-flex align-items-center gap-2 px-2">
+																<input
+																	type="checkbox"
+																	checked={item.is_done}
+																	onChange={() => taskDone(item)}
+																/>
+																<button
+																	className="btn btn-outline-danger"
+																	onClick={() => taskDelete(item.id)}
+																>
+																	Eliminar
+																</button>
+															</div>
 														</div>
-													</div>
-												</li>
-											)
-										})
+													</li>
+												)
+											})
 
-									}
-								</>
-						}
-					</ul>
+										}
+									</>
+							}
+						</ul>
+					</div>
 				</div>
-			</div>
-			<div className="row mt-2">
-				{/* 
+				<div className="row mt-2">
+					{/* 
 					1.- All
 					2.- Task End
 					3.- Task pending
 				*/}
 
-				<div className="col-12 col-md-6 offset-md-3 border border-danger">
-					<div className="d-flex justify-content-center gap-3 flex-wrap">
-						{/* all */}
-						<label className="d-flex align-items-center gap-1">
-							<input
-								type="checkbox"
-								checked={filterSatatus === "all"}
-								onChange={() => setFilterStatus("all")}
-							/>
-							<span>Todas</span>
-						</label>
+					<div className="col-12 col-md-6 offset-md-3 border border-danger">
+						<div className="d-flex justify-content-center gap-3 flex-wrap">
+							{/* all */}
+							<label className="d-flex align-items-center gap-1">
+								<input
+									type="checkbox"
+									checked={filterSatatus === "all"}
+									onChange={() => setFilterStatus("all")}
+								/>
+								<span>Todas</span>
+							</label>
 
-						{/* Task end */}
-						<label className="d-flex align-items-center gap-1">
-							<input
-								type="checkbox"
-								checked={filterSatatus === "done"}
-								onChange={() => setFilterStatus("done")}
+							{/* Task end */}
+							<label className="d-flex align-items-center gap-1">
+								<input
+									type="checkbox"
+									checked={filterSatatus === "done"}
+									onChange={() => setFilterStatus("done")}
 
-							/>
-							<span>Finalizadas</span>
-						</label>
+								/>
+								<span>Finalizadas</span>
+							</label>
 
-						{/* Task pending */}
-						<label className="d-flex align-items-center gap-1">
-							<input
-								type="checkbox"
-								checked={filterSatatus === "pending"}
-								onChange={() => setFilterStatus("pending")}
-							/>
-							<span>Por finalizar</span>
-						</label>
+							{/* Task pending */}
+							<label className="d-flex align-items-center gap-1">
+								<input
+									type="checkbox"
+									checked={filterSatatus === "pending"}
+									onChange={() => setFilterStatus("pending")}
+								/>
+								<span>Por finalizar</span>
+							</label>
+						</div>
 					</div>
 				</div>
-			</div>
-		</div >
+			</div >
+		</>
+
 	);
 };
 

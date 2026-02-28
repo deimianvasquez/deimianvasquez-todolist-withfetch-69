@@ -9,10 +9,10 @@ import "bootstrap"
 import '../styles/index.css'
 
 // components
-import Home from './components/Home';
+
+import { AppRouter } from './AppRouter';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
- 
-    <Home/>
- ,
+
+    <AppRouter />,
 )
